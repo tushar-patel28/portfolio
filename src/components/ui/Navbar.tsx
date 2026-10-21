@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { content } from "@/data/content";
@@ -119,14 +119,13 @@ export function Navbar() {
                     )}
                   >
                     {item.label}
-                    {isActive && (
-                      <motion.span
-                        layoutId="nav-active"
-                        aria-hidden="true"
-                        className="absolute inset-x-3 -bottom-px h-px bg-accent"
-                        transition={{ type: "spring", stiffness: 500, damping: 40 }}
-                      />
-                    )}
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        "absolute inset-x-3 -bottom-px h-px origin-center bg-accent transition-transform duration-300 motion-reduce:transition-none",
+                        isActive ? "scale-x-100" : "scale-x-0",
+                      )}
+                    />
                   </a>
                 </li>
               );
@@ -164,7 +163,7 @@ export function Navbar() {
 
       <AnimatePresence initial={false}>
         {open && (
-          <motion.div
+          <m.div
             ref={menuRef}
             id="mobile-menu"
             key="mobile-menu"
@@ -206,7 +205,7 @@ export function Navbar() {
                 </ul>
               </Container>
             </nav>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </header>

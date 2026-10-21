@@ -100,7 +100,12 @@ export interface NavItem {
 export interface SiteMeta {
   title: string;
   description: string;
-  /** Production URL, used for metadata. */
+  /**
+   * Full public URL of the homepage, including any basePath, without a trailing slash.
+   * e.g. "https://tusharpatel.dev" or "https://tushar-patel28.github.io/portfolio".
+   * Used for canonical, Open Graph, sitemap and robots. Leave "" until known:
+   * Vercel builds then use the project's production domain automatically (see src/lib/site.ts).
+   */
   url: string;
 }
 
@@ -124,7 +129,7 @@ export const content: Content = {
     title: "Tushar Patel — Software Engineer",
     description:
       "Tushar Patel is a software engineer building full-stack products and production AI systems.",
-    url: "https://example.vercel.app", // TODO: set to the real URL after the first Vercel deploy
+    url: "", // TODO: set once the production URL is final (Vercel builds fall back to their domain)
   },
 
   nav: [

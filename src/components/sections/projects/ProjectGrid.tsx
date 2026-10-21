@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { m } from "framer-motion";
 import { useState } from "react";
 import { projectCategories, type Project, type ProjectCategory } from "@/data/content";
 import { cn } from "@/lib/cn";
@@ -10,6 +10,8 @@ type Filter = "All" | ProjectCategory;
 
 export function ProjectGrid({ projects }: { projects: Project[] }) {
   const [filter, setFilter] = useState<Filter>("All");
+  // Cards render statically on the server (and without JS); they only animate after a filter click.
+  const [filtered, setFiltered] = useState(false);
 
   // Only offer categories that have at least one project.
   const filters: Filter[] = [
@@ -34,7 +36,10 @@ export function ProjectGrid({ projects }: { projects: Project[] }) {
               key={f}
               type="button"
               aria-pressed={selected}
-              onClick={() => setFilter(f)}
+              onClick={() => {
+                setFilter(f);
+                setFiltered(true);
+              }}
               className={cn(
                 "inline-flex h-8 items-center gap-2 rounded-full border px-3.5 text-sm transition-colors",
                 selected
@@ -58,22 +63,18 @@ export function ProjectGrid({ projects }: { projects: Project[] }) {
         {visible.length === 1 ? "project" : "projects"}
       </p>
 
-      <ul className="grid gap-4 sm:grid-cols-2">
-        {/* initial={false}: server-rendered cards appear without animation (and without JS) */}
-        <AnimatePresence initial={false} mode="popLayout">
-          {visible.map((project) => (
-            <motion.li
-              key={project.title}
-              layout
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.98 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-            >
-              <ProjectCard project={project} />
-            </motion.li>
-          ))}
-        </AnimatePresence>
+      {/* Keyed by filter so the visible set fades in fresh on each change */}
+      <ul key={filter} className="grid gap-4 sm:grid-cols-2">
+        {visible.map((project, i) => (
+          <m.li
+            key={project.title}
+            initial={filtered ? { opacity: 0, y: 8 } : false}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, delay: i * 0.03, ease: "easeOut" }}
+          >
+            <ProjectCard project={project} />
+          </m.li>
+        ))}
       </ul>
     </>
   );

@@ -29,23 +29,29 @@ NEXT_PUBLIC_BASE_PATH=/portfolio npm run build   # GitHub Pages build
 ```
 src/
   app/
-    layout.tsx        # fonts, <Providers>, metadata (read from content.site)
+    layout.tsx        # fonts, <Providers>, SEO metadata, viewport, JSON-LD (all from content + siteUrl)
     page.tsx          # composes Navbar, the sections and Footer, in order
-    globals.css       # Tailwind import, design tokens (dark default + light), dark: variant
-    favicon.ico
+    not-found.tsx     # 404 page (exported as out/404.html)
+    globals.css       # Tailwind import, design tokens (dark default + light), dark: variant, enter keyframes
+    og.png/route.tsx  # Open Graph / Twitter image, rendered at build time with next/og
+    sitemap.ts  robots.ts  manifest.ts
   components/
     sections/         # one file per page section: Hero, About, Experience, Projects, Skills, Contact
       projects/       #   ProjectGrid (client: category filter) + ProjectCard
     ui/               # design system: Container, Section, SectionHeading, Card, Tag/TagList,
-                      #   Button, ExternalLink, Reveal, ThemeToggle, Navbar, Footer, Providers, icons
+                      #   Button, ExternalLink, Enter, Reveal, ThemeToggle, Navbar, Footer, Providers, icons
   data/
     content.ts        # ALL site content + its TypeScript types
   lib/
     paths.ts          # basePath + assetPath()
+    site.ts           # siteUrl + absoluteUrl() — the site's public address
     theme.ts          # theme init script (no-flash) + applyTheme()
     cn.ts             # className joiner
 public/
-  resume.pdf          # placeholder; replace with the real resume
+  resume.pdf          # exported resume (see Content)
+  icon.svg            # "TP" monogram — source for all icons
+  favicon.ico  apple-touch-icon.png  icon-192.png  icon-512.png  icon-maskable-512.png
+assets/fonts/         # Geist TTFs (OFL) used only by og.png at build time
 ```
 
 ## Conventions
@@ -54,10 +60,10 @@ public/
 - Bio, experience, education, projects, skills, links, nav, contact copy and site metadata all live there, typed by the interfaces at the top of the file.
 - Components import `content` and render it. Don't hardcode prose in components. Generic UI labels such as "View my work" or "Resume" are fine.
 - To add a new kind of content: add or extend the interface, add the data, then render it in a component.
-- Entries marked `// TODO` are placeholders. Only `site.url` is left, pending the first Vercel deploy.
+- Entries marked `// TODO` are placeholders. Only `site.url` is left (see SEO).
 - Content must be accurate. Don't invent metrics, companies, links or claims. Never add a phone number anywhere, including `public/resume.pdf`.
 - Projects: each has a `category` from `projectCategories` (this drives the filter buttons, and empty categories are hidden), a one-line `description`, a single headline `metric`, and optional `details` (shown under "How it's built"). `repo` and `live` are optional, and their icons are hidden when absent. `featured` projects sort first and get a "Featured" label.
-- `public/resume.pdf` was exported from `Resume/Tushar_Patel_Resume_AI_SDE.docx` with the phone number removed.
+- `public/resume.pdf` is exported from a copy of `Resume/Tushar_Patel_Resume_AI_SDE.docx` with the phone number removed, the client name replaced ("a real police department client's"), and author metadata set to "Tushar Patel". Keep all three when re-exporting.
 
 ### basePath and `assetPath()`
 - `basePath` comes from `NEXT_PUBLIC_BASE_PATH` and defaults to `""` (for Vercel). For a GitHub Pages project site, build with `NEXT_PUBLIC_BASE_PATH=/portfolio`.
@@ -67,7 +73,15 @@ public/
   ```
 - In `content.ts`, write public paths without the base path (`"/resume.pdf"`). Components apply `assetPath()` when they render.
 - `assetPath()` returns external URLs, `#anchors` and `mailto:` links unchanged.
-- `next/link` hrefs and files under `src/app/` (favicon, metadata files) get the prefix automatically. Don't wrap those.
+- `next/link` hrefs and Next-generated metadata links (manifest) get the prefix automatically. Don't wrap those. Icons live in `public/` and are declared in `metadata.icons` via `assetPath()`.
+- Plain root-relative links to pages (e.g. the 404 page's "Back to home") also use `assetPath("/")`.
+
+### SEO and the site URL
+- Anything that needs the site's absolute address uses `siteUrl` / `absoluteUrl(path)` from `@/lib/site`: `metadataBase`, canonical, `og:url`, `og:image`, the sitemap, robots and JSON-LD. Never hardcode a domain.
+- `siteUrl` resolves in this order: `content.site.url`, then `VERCEL_PROJECT_PRODUCTION_URL` (set by Vercel at build time), then `http://localhost:3000` + basePath (local builds only). `content.site.url` is the full public URL, including any base path, with no trailing slash.
+- `absoluteUrl()` takes a path *without* basePath (`absoluteUrl("/og.png")`). The base path is already part of `siteUrl`.
+- The OG image is a route handler at `src/app/og.png/route.tsx`, not the `opengraph-image` file convention. Static export writes the convention files without an extension (`out/opengraph-image`), so hosts would serve the wrong content type. It reads name, tagline, location and GitHub from `content.ts`, so it updates on rebuild. Its colors are copied from the dark tokens, so update both together.
+- `sitemap.ts`, `robots.ts`, `manifest.ts` and `og.png` need `export const dynamic = "force-static"` under static export.
 
 ### Static export constraints
 - No Server Actions, route handlers that read the request, cookies or headers, rewrites, redirects, middleware/proxy, ISR, or dynamic routes without `generateStaticParams`.
@@ -102,9 +116,16 @@ public/
 
 ### Animation
 - Keep animation subtle: short fades and small lifts (≈12px, 0.2–0.5s, `easeOut`).
-- For entrance effects, wrap content in `<Reveal delay? immediate?>` rather than writing one-off `motion` props. Use `immediate` for above-the-fold content (the hero) and small `delay` values to stagger siblings.
-- Reveal marks its element with `data-reveal`. Under `prefers-reduced-motion`, and without JS, CSS forces the final state, so content is never stuck invisible. Keep that attribute on any new entrance animation.
-- `<Providers>` sets `MotionConfig reducedMotion="user"`. Don't bypass it.
+- **Above the fold (the hero), use `<Enter delay?>`.** It's a CSS-only animation that plays on first paint without waiting for JS, which keeps mobile LCP fast. Don't use framer-motion there.
+- **Below the fold, use `<Reveal delay?>`** (framer-motion `whileInView`) rather than one-off motion props. Use small `delay` values to stagger siblings.
+- Reveal marks its element with `data-reveal`. Under `prefers-reduced-motion`, and without JS, CSS forces the final state, so content is never stuck invisible. Keep that attribute on any new scroll animation. `.animate-enter` is disabled under reduced motion too.
+- framer-motion is loaded through `LazyMotion features={domAnimation} strict` in `<Providers>`. **Use `m.div` / `m.li`, never `motion.*`.** `strict` throws on `motion.*` because it would pull in the full bundle. `domAnimation` has no layout animations (`layout` / `layoutId`), so use CSS transitions for those (see the nav underline).
+- `<Providers>` also sets `MotionConfig reducedMotion="user"`. Don't bypass it.
+
+### Performance budget
+- First-load JS for `/` is ~178 KB gzip, not counting the `noModule` polyfill chunk that modern browsers skip. About 157 KB of that is the React and Next.js runtime. Keep app code lean, and check `out/index.html` script sizes after adding client code.
+- Fonts come only from `next/font`, which self-hosts them with size-adjusted fallbacks (CLS 0). Don't add `<link>` font stylesheets.
+- When running Lighthouse locally, serve `out/` with gzip. Python's `http.server` doesn't compress, which inflates mobile LCP by about 2.5s.
 
 ### Navbar
 - It is sticky and blurred, and the border appears after scrolling. Section links come from `content.nav`.
