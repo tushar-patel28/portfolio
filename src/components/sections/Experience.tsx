@@ -32,11 +32,14 @@ export function Experience() {
                     )}
                   </h3>
                   {job.location && <p className="mt-1 text-sm text-muted">{job.location}</p>}
+                  {job.summary && (
+                    <p className="mt-3 text-sm text-pretty text-foreground/90">{job.summary}</p>
+                  )}
                   <ul className="mt-4 space-y-2 text-muted">
                     {job.highlights.map((h) => (
-                      <li key={h} className="flex gap-3">
-                        <span aria-hidden="true" className="mt-[0.7em] h-px w-3 shrink-0 bg-accent" />
-                        <span className="text-pretty">{h}</span>
+                      <li key={h} className="flex min-w-0 gap-3 leading-relaxed">
+                        <span aria-hidden="true" className="mt-[0.8em] h-px w-3 shrink-0 bg-accent" />
+                        <span className="min-w-0 text-pretty">{h}</span>
                       </li>
                     ))}
                   </ul>

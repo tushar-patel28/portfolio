@@ -35,6 +35,7 @@ src/
     favicon.ico
   components/
     sections/         # one file per page section: Hero, About, Experience, Projects, Skills, Contact
+      projects/       #   ProjectGrid (client: category filter) + ProjectCard
     ui/               # design system: Container, Section, SectionHeading, Card, Tag/TagList,
                       #   Button, ExternalLink, Reveal, ThemeToggle, Navbar, Footer, Providers, icons
   data/
@@ -53,7 +54,10 @@ public/
 - Bio, experience, education, projects, skills, links, nav, contact copy and site metadata all live there, typed by the interfaces at the top of the file.
 - Components import `content` and render it. Don't hardcode prose in components. Generic UI labels such as "View my work" or "Resume" are fine.
 - To add a new kind of content: add or extend the interface, add the data, then render it in a component.
-- Entries marked `// TODO` are placeholders.
+- Entries marked `// TODO` are placeholders. Only `site.url` is left, pending the first Vercel deploy.
+- Content must be accurate. Don't invent metrics, companies, links or claims. Never add a phone number anywhere, including `public/resume.pdf`.
+- Projects: each has a `category` from `projectCategories` (this drives the filter buttons, and empty categories are hidden), a one-line `description`, a single headline `metric`, and optional `details` (shown under "How it's built"). `repo` and `live` are optional, and their icons are hidden when absent. `featured` projects sort first and get a "Featured" label.
+- `public/resume.pdf` was exported from `Resume/Tushar_Patel_Resume_AI_SDE.docx` with the phone number removed.
 
 ### basePath and `assetPath()`
 - `basePath` comes from `NEXT_PUBLIC_BASE_PATH` and defaults to `""` (for Vercel). For a GitHub Pages project site, build with `NEXT_PUBLIC_BASE_PATH=/portfolio`.
@@ -72,7 +76,7 @@ public/
 - `trailingSlash: true` makes every route emit `route/index.html`, which suits static hosts.
 
 ### Components
-- Use Server Components by default. Add `"use client"` only when a component needs state, effects, or framer-motion APIs directly. Currently that's Navbar, ThemeToggle, Reveal and Providers.
+- Use Server Components by default. Add `"use client"` only when a component needs state, effects, or framer-motion APIs directly. Currently that's Navbar, ThemeToggle, Reveal, Providers and ProjectGrid.
 - Use named exports (`export function Hero()`), one component per file (small helpers like `TagList` may share a file), with PascalCase filenames.
 - Import via the `@/` alias (`@/components/...`, `@/data/content`, `@/lib/paths`).
 - Build sections from the `ui/` primitives rather than one-off markup:

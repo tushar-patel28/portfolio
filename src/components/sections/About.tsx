@@ -25,11 +25,14 @@ export function About() {
                   <p className="mt-0.5 text-sm text-muted">{edu.degree}</p>
                   <p className="mt-2 font-mono text-xs text-muted">
                     {edu.start} – {edu.end}
+                    {edu.location && ` · ${edu.location}`}
                   </p>
                   {edu.details && (
-                    <ul className="mt-3 space-y-1 text-sm text-muted">
+                    <ul className="mt-3 space-y-1.5 text-sm text-pretty text-muted">
                       {edu.details.map((d) => (
-                        <li key={d}>{d}</li>
+                        <li key={d} className="border-l border-border pl-3">
+                          {d}
+                        </li>
                       ))}
                     </ul>
                   )}

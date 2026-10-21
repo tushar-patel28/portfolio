@@ -22,18 +22,21 @@ export function Hero() {
             </h1>
           </Reveal>
           <Reveal immediate delay={0.16}>
-            <p className="mt-4 text-2xl font-medium tracking-tight text-muted sm:text-3xl">
-              {profile.role}
+            <p className="mt-5 max-w-2xl text-xl leading-snug font-medium tracking-tight text-pretty text-muted sm:text-2xl">
+              {profile.tagline}
             </p>
           </Reveal>
           <Reveal immediate delay={0.24}>
-            <p className="mt-8 max-w-xl text-lg leading-relaxed text-pretty text-muted">
-              {profile.tagline}
-            </p>
-            <p className="mt-6 inline-flex items-center gap-2 font-mono text-xs text-muted">
-              <Icon name="location" size={14} />
-              {profile.location}
-            </p>
+            <ul className="mt-8 space-y-2.5 font-mono text-xs leading-relaxed text-muted">
+              <li className="flex gap-2.5">
+                <span aria-hidden="true" className="mt-[0.45em] size-2 shrink-0 rounded-full bg-accent" />
+                <span className="text-pretty">{profile.status}</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <Icon name="location" size={14} className="shrink-0" />
+                {profile.location}
+              </li>
+            </ul>
           </Reveal>
 
           <Reveal immediate delay={0.32}>
