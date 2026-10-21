@@ -2,7 +2,7 @@
 
 My personal portfolio: a fast, single-page static site covering my experience, projects and skills, with a downloadable resume.
 
-**Live site:** _coming soon_ <!-- TODO: add the live URL -->
+**Live site:** [tusharpatel.vercel.app](https://tusharpatel.vercel.app)
 
 ## Stack
 
@@ -43,7 +43,7 @@ Everything on the site comes from **[`src/data/content.ts`](src/data/content.ts)
 - **Types:** each section's fields are typed at the top of the file. If you add a field, TypeScript points you to every place that needs it.
 - **Projects:** each one needs a `category` (`"AI/ML" | "Full-Stack" | "Cloud" | "Data"`), which drives the filter, plus a one-line `description` and a headline `metric`. `details`, `repo`, `live` and `featured` are optional. The GitHub and demo icons only appear when a link is set.
 - **Resume:** replace `public/resume.pdf`, keeping the filename.
-- **Site URL:** once the domain is final, set `site.url` (e.g. `"https://tusharpatel.dev"`). The canonical URL, Open Graph tags, sitemap and robots.txt all read from it.
+- **Site URL:** `site.url` is the canonical address (`"https://tusharpatel.vercel.app"`). The canonical URL, Open Graph tags, sitemap and robots.txt all read from it, so update it if the domain changes.
 
 The Open Graph image (`/og.png`) is generated at build time from your name, tagline and location, so it updates whenever you rebuild.
 
@@ -67,9 +67,9 @@ The site can be served from a domain root (Vercel) or from a sub-path (a GitHub 
 
 ### Vercel (primary)
 
-1. Import `tushar-patel28/portfolio` at [vercel.com/new](https://vercel.com/new). The framework preset is detected as Next.js. Leave the build settings at their defaults, with no environment variables.
-2. Deploy. Absolute URLs use the project's production domain automatically.
-3. If you add a custom domain, set `site.url` in `content.ts` to that URL and push.
+The site is live at **https://tusharpatel.vercel.app**, deployed through Vercel's GitHub integration. Every push to `main` deploys to production automatically. No environment variables are needed.
+
+To set it up from scratch: import `tushar-patel28/portfolio` at [vercel.com/new](https://vercel.com/new), keep the detected Next.js preset and default build settings, and deploy. If you add a custom domain, set `site.url` in `content.ts` to that URL and push.
 
 ### GitHub Pages (alternative)
 

@@ -129,7 +129,7 @@ export const content: Content = {
     title: "Tushar Patel — Software Engineer",
     description:
       "Tushar Patel is a software engineer building full-stack products and production AI systems.",
-    url: "", // TODO: set once the production URL is final (Vercel builds fall back to their domain)
+    url: "https://tusharpatel.vercel.app",
   },
 
   nav: [

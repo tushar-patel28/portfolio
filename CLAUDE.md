@@ -10,7 +10,7 @@ Personal portfolio site for Tushar Patel. It is a single page, built as a fully 
 - **TypeScript** (strict) and **Tailwind CSS v4**. Tokens live in `src/app/globals.css`, and there is no `tailwind.config`.
 - **framer-motion** for animation and **lucide-react** for icons.
 - Fonts are Geist and Geist Mono, loaded via `next/font/google`.
-- **Deploy:** Vercel is the primary target. GitHub Pages works via `NEXT_PUBLIC_BASE_PATH` (see below). There is no CI or deploy workflow yet.
+- **Deploy:** Vercel, live at https://tusharpatel.vercel.app (see Deployment). GitHub Pages works via `NEXT_PUBLIC_BASE_PATH`.
 
 **Dependency rule:** ask before adding any npm dependency beyond the ones above.
 
@@ -23,6 +23,13 @@ npm run lint    # ESLint (next core-web-vitals + typescript)
 npx tsc --noEmit
 NEXT_PUBLIC_BASE_PATH=/portfolio npm run build   # GitHub Pages build
 ```
+
+## Deployment
+
+- **Vercel**, connected through the dashboard's GitHub integration. Every push to `main` auto-deploys to production at https://tusharpatel.vercel.app. There is no CI workflow or `vercel.json`.
+- **No environment variables** are set on Vercel, and none are needed.
+- `content.site.url` (`https://tusharpatel.vercel.app`) is the canonical domain. Canonical, OG, sitemap, robots and JSON-LD all read it. Update it if a custom domain is added.
+- GitHub Pages builds need `NEXT_PUBLIC_BASE_PATH=/portfolio`, and `site.url` set to `https://tushar-patel28.github.io/portfolio`.
 
 ## Folder structure
 
@@ -60,7 +67,6 @@ assets/fonts/         # Geist TTFs (OFL) used only by og.png at build time
 - Bio, experience, education, projects, skills, links, nav, contact copy and site metadata all live there, typed by the interfaces at the top of the file.
 - Components import `content` and render it. Don't hardcode prose in components. Generic UI labels such as "View my work" or "Resume" are fine.
 - To add a new kind of content: add or extend the interface, add the data, then render it in a component.
-- Entries marked `// TODO` are placeholders. Only `site.url` is left (see SEO).
 - Content must be accurate. Don't invent metrics, companies, links or claims. Never add a phone number anywhere, including `public/resume.pdf`.
 - Projects: each has a `category` from `projectCategories` (this drives the filter buttons, and empty categories are hidden), a one-line `description`, a single headline `metric`, and optional `details` (shown under "How it's built"). `repo` and `live` are optional, and their icons are hidden when absent. `featured` projects sort first and get a "Featured" label.
 - `public/resume.pdf` is exported from a copy of `Resume/Tushar_Patel_Resume_AI_SDE.docx` with the phone number removed, the client name replaced ("a real police department client's"), and author metadata set to "Tushar Patel". Keep all three when re-exporting.
