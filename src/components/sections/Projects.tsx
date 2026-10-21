@@ -1,8 +1,13 @@
 import { content } from "@/data/content";
+import { Card } from "@/components/ui/Card";
+import { ExternalLink } from "@/components/ui/ExternalLink";
 import { Icon } from "@/components/ui/icons";
 import { Reveal } from "@/components/ui/Reveal";
 import { Section } from "@/components/ui/Section";
-import { Tag } from "@/components/ui/Tag";
+import { TagList } from "@/components/ui/Tag";
+
+const iconLink =
+  "rounded-md p-1.5 text-muted transition-colors hover:bg-background hover:text-foreground";
 
 export function Projects() {
   // Featured projects first, otherwise keep the order from content.ts.
@@ -12,49 +17,52 @@ export function Projects() {
 
   return (
     <Section id="projects" title="Projects">
-      <div className="grid gap-6 sm:grid-cols-2">
+      <ul className="grid gap-4 sm:grid-cols-2">
         {projects.map((project, i) => (
-          <Reveal key={project.title} delay={(i % 2) * 0.08} className="h-full">
-            <article className="group flex h-full flex-col rounded-2xl border border-border bg-surface p-6 transition-all duration-300 hover:-translate-y-1 hover:border-accent/50 hover:shadow-lg hover:shadow-accent/5">
-              <div className="flex items-start justify-between gap-4">
-                <h3 className="text-lg font-medium transition-colors group-hover:text-accent">
-                  {project.title}
-                </h3>
-                <div className="flex shrink-0 items-center gap-3 text-muted">
-                  {project.repo && (
-                    <a
-                      href={project.repo}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`${project.title} source code`}
-                      className="transition-colors hover:text-foreground"
-                    >
-                      <Icon name="github" size={18} />
-                    </a>
-                  )}
-                  {project.live && (
-                    <a
-                      href={project.live}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`${project.title} live demo`}
-                      className="transition-colors hover:text-foreground"
-                    >
-                      <Icon name="external" size={18} />
-                    </a>
-                  )}
+          <li key={project.title}>
+            <Reveal delay={(i % 2) * 0.08} className="h-full">
+              <Card as="article" interactive className="flex h-full flex-col">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    {project.featured && (
+                      <p className="mb-2 font-mono text-xs text-accent">Featured</p>
+                    )}
+                    <h3 className="text-lg font-medium">{project.title}</h3>
+                  </div>
+                  <div className="-mt-1 -mr-1.5 flex shrink-0 items-center">
+                    {project.repo && (
+                      <ExternalLink
+                        href={project.repo}
+                        showIcon={false}
+                        aria-label={`${project.title} source code (opens in a new tab)`}
+                        className={iconLink}
+                      >
+                        <Icon name="github" size={18} />
+                      </ExternalLink>
+                    )}
+                    {project.live && (
+                      <ExternalLink
+                        href={project.live}
+                        showIcon={false}
+                        aria-label={`${project.title} live demo (opens in a new tab)`}
+                        className={iconLink}
+                      >
+                        <Icon name="external" size={18} />
+                      </ExternalLink>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <p className="mt-3 flex-1 leading-relaxed text-muted">{project.description}</p>
-              <div className="mt-5 flex flex-wrap gap-2">
-                {project.tech.map((t) => (
-                  <Tag key={t}>{t}</Tag>
-                ))}
-              </div>
-            </article>
-          </Reveal>
+                <p className="mt-3 flex-1 leading-relaxed text-pretty text-muted">
+                  {project.description}
+                </p>
+                <div className="mt-6">
+                  <TagList items={project.tech} label={`Technologies used in ${project.title}`} />
+                </div>
+              </Card>
+            </Reveal>
+          </li>
         ))}
-      </div>
+      </ul>
     </Section>
   );
 }

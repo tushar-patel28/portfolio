@@ -1,27 +1,28 @@
 import { content } from "@/data/content";
 import { Reveal } from "@/components/ui/Reveal";
 import { Section } from "@/components/ui/Section";
+import { TagList } from "@/components/ui/Tag";
 
 export function Skills() {
   return (
     <Section id="skills" title="Skills">
-      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      <dl className="divide-y divide-border border-y border-border">
         {content.skills.map((group, i) => (
-          <Reveal key={group.category} delay={i * 0.06}>
-            <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider">
+          // Reveal's div is the dt/dd group wrapper, which <dl> allows.
+          <Reveal
+            key={group.category}
+            delay={i * 0.05}
+            className="grid gap-3 py-6 md:grid-cols-[10rem_1fr] md:gap-10"
+          >
+            <dt className="font-mono text-xs tracking-wider text-muted uppercase md:pt-1">
               {group.category}
-            </h3>
-            <ul className="space-y-1.5 text-muted">
-              {group.items.map((item) => (
-                <li key={item} className="flex items-center gap-2">
-                  <span className="size-1 rounded-full bg-accent" />
-                  {item}
-                </li>
-              ))}
-            </ul>
+            </dt>
+            <dd>
+              <TagList items={group.items} />
+            </dd>
           </Reveal>
         ))}
-      </div>
+      </dl>
     </Section>
   );
 }

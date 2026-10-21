@@ -10,8 +10,14 @@ import { Navbar } from "@/components/ui/Navbar";
 export default function Home() {
   return (
     <>
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:rounded-lg focus:bg-foreground focus:px-4 focus:py-2 focus:text-sm focus:text-background"
+      >
+        Skip to content
+      </a>
       <Navbar />
-      <main className="mx-auto w-full max-w-5xl flex-1 px-6">
+      <main id="main" className="flex-1">
         <Hero />
         <About />
         <Experience />

@@ -1,96 +1,73 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { ArrowDown } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { content } from "@/data/content";
+import { Button } from "@/components/ui/Button";
+import { Container } from "@/components/ui/Container";
 import { Icon } from "@/components/ui/icons";
+import { Reveal } from "@/components/ui/Reveal";
 import { assetPath } from "@/lib/paths";
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 16 },
-  show: { opacity: 1, y: 0 },
-};
 
 export function Hero() {
   const { profile } = content;
 
   return (
-    <section id="top" className="flex min-h-[90svh] flex-col justify-center pt-16">
-      <motion.div
-        initial="hidden"
-        animate="show"
-        transition={{ staggerChildren: 0.1 }}
-        className="max-w-3xl"
-      >
-        <motion.p variants={fadeUp} className="mb-4 font-mono text-sm text-accent">
-          {profile.greeting}
-        </motion.p>
-        <motion.h1
-          variants={fadeUp}
-          className="text-4xl font-semibold tracking-tight sm:text-6xl"
-        >
-          {profile.name}
-        </motion.h1>
-        <motion.p
-          variants={fadeUp}
-          className="mt-3 text-2xl font-medium tracking-tight text-muted sm:text-4xl"
-        >
-          {profile.role}
-        </motion.p>
-        <motion.p variants={fadeUp} className="mt-6 max-w-xl text-lg leading-relaxed text-muted">
-          {profile.tagline}
-        </motion.p>
-        <motion.p variants={fadeUp} className="mt-4 flex items-center gap-2 text-sm text-muted">
-          <Icon name="location" size={16} />
-          {profile.location}
-        </motion.p>
+    <section id="top" aria-label="Introduction" className="flex min-h-[calc(100svh-4rem)] items-center py-20">
+      <Container>
+        <div className="max-w-3xl">
+          <Reveal immediate>
+            <p className="mb-6 font-mono text-sm text-accent">{profile.greeting}</p>
+          </Reveal>
+          <Reveal immediate delay={0.08}>
+            <h1 className="text-5xl font-semibold tracking-tighter text-balance sm:text-7xl">
+              {profile.name}
+            </h1>
+          </Reveal>
+          <Reveal immediate delay={0.16}>
+            <p className="mt-4 text-2xl font-medium tracking-tight text-muted sm:text-3xl">
+              {profile.role}
+            </p>
+          </Reveal>
+          <Reveal immediate delay={0.24}>
+            <p className="mt-8 max-w-xl text-lg leading-relaxed text-pretty text-muted">
+              {profile.tagline}
+            </p>
+            <p className="mt-6 inline-flex items-center gap-2 font-mono text-xs text-muted">
+              <Icon name="location" size={14} />
+              {profile.location}
+            </p>
+          </Reveal>
 
-        <motion.div variants={fadeUp} className="mt-10 flex flex-wrap items-center gap-4">
-          <a
-            href="#projects"
-            className="rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition-opacity hover:opacity-85"
-          >
-            View my work
-          </a>
-          <a
-            href={assetPath(profile.resume)}
-            download
-            className="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3 text-sm font-medium transition-colors hover:border-accent hover:text-accent"
-          >
-            <Icon name="download" size={16} />
-            Download resume
-          </a>
-          <ul className="flex items-center gap-4 sm:ml-2">
-            {profile.socials.map((social) => (
-              <li key={social.href}>
-                <a
-                  href={social.href}
-                  target={social.href.startsWith("http") ? "_blank" : undefined}
-                  rel="noopener noreferrer"
-                  aria-label={social.label}
-                  className="text-muted transition-colors hover:text-foreground"
-                >
-                  <Icon name={social.icon} size={20} />
-                </a>
-              </li>
-            ))}
-          </ul>
-        </motion.div>
-      </motion.div>
-
-      <motion.a
-        href="#about"
-        aria-label="Scroll to About"
-        className="mt-20 hidden self-start text-muted sm:block"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1, y: [0, 6, 0] }}
-        transition={{
-          opacity: { delay: 1, duration: 0.6 },
-          y: { delay: 1, duration: 2, repeat: Infinity, ease: "easeInOut" },
-        }}
-      >
-        <ArrowDown size={20} />
-      </motion.a>
+          <Reveal immediate delay={0.32}>
+            <div className="mt-10 flex flex-wrap items-center gap-3">
+              <Button href="#projects">
+                View my work
+                <ArrowRight size={16} aria-hidden="true" />
+              </Button>
+              <Button variant="secondary" href={assetPath(profile.resume)} download>
+                <Icon name="download" size={16} />
+                Download resume
+              </Button>
+              <ul className="flex items-center gap-1 sm:ml-2">
+                {profile.socials.map((social) => {
+                  const external = social.href.startsWith("http");
+                  return (
+                    <li key={social.href}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        href={social.href}
+                        aria-label={external ? `${social.label} (opens in a new tab)` : social.label}
+                        {...(external && { target: "_blank", rel: "noopener noreferrer" })}
+                      >
+                        <Icon name={social.icon} size={18} />
+                      </Button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </Reveal>
+        </div>
+      </Container>
     </section>
   );
 }

@@ -1,35 +1,42 @@
 @import "tailwindcss";
 
+/* `dark:` follows the data-theme attribute set by the theme script, not the OS directly. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 /*
- * Design tokens. Use the semantic utilities (bg-background, text-muted,
- * border-border, text-accent, bg-surface) instead of raw palette colors,
- * so light/dark mode stays consistent. Dark mode follows the OS setting.
+ * Design tokens. Components use the semantic utilities only:
+ *   bg-background  bg-surface  text-foreground  text-muted  border-border  text-accent
+ * Dark is the default (also what no-JS visitors get); light applies via data-theme="light".
+ * All text/background pairs meet WCAG AA (≥ 4.5:1) in both themes:
+ *   dark  — foreground 16.8, muted 7.6 (7.2 on surface), accent 13.4
+ *   light — foreground 17.1, muted 7.0 (7.3 on surface), accent 5.2
  */
-:root {
-  --background: #fafafa;
-  --foreground: #18181b;
-  --muted: #52525b;
-  --surface: #ffffff;
-  --border: #e4e4e7;
-  --accent: #4f46e5;
+:root,
+[data-theme="dark"] {
+  --background: #0a0a0c;
+  --surface: #131316;
+  --foreground: #ececef;
+  --muted: #a0a0ab;
+  --border: #26262b;
+  --accent: #5eead4;
+  color-scheme: dark;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #09090b;
-    --foreground: #f4f4f5;
-    --muted: #a1a1aa;
-    --surface: #18181b;
-    --border: #27272a;
-    --accent: #818cf8;
-  }
+[data-theme="light"] {
+  --background: #fafafa;
+  --surface: #ffffff;
+  --foreground: #17171a;
+  --muted: #56565f;
+  --border: #e2e2e6;
+  --accent: #0f766e;
+  color-scheme: light;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
-  --color-surface: var(--surface);
   --color-border: var(--border);
   --color-accent: var(--accent);
   --font-sans: var(--font-geist-sans);
@@ -38,12 +45,8 @@
 
 html {
   scroll-behavior: smooth;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
+  /* Keeps anchored sections clear of the sticky navbar (h-16) */
+  scroll-padding-top: 5rem;
 }
 
 body {
@@ -52,5 +55,29 @@ body {
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--accent) 25%, transparent);
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Set briefly by applyTheme() so a theme switch doesn't animate every color. */
+.theme-switching,
+.theme-switching * {
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  /* Reveal renders its final state immediately. */
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
